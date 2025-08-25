@@ -9,10 +9,11 @@ import 'package:first_project/MainWidgets/textfield_widget.dart';
 import 'package:first_project/Recap/Recap1.dart';
 import 'package:first_project/data_save/shared_preferences_page.dart';
 import 'package:first_project/navigation_processes/first_page.dart';
+import 'package:first_project/projects/body_mass_index/main_page.dart';
+import 'package:first_project/projects/notes_app/home_page.dart';
 import 'package:flutter/material.dart';
 
 import 'MainWidgets/show_image.dart';
-import 'body_mass_index/main_page.dart';
 
 
 void main() {
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "First Project",
-      home: SharedPreferencesPage(),
+      home: HomePage(),
     );
   }
 }
