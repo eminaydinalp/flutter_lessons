@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatelessWidget {
-  String note;
+  final String note;
   const DetailPage({super.key, required this.note});
 
   @override
@@ -9,8 +9,12 @@ class DetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Not Detay"),
+        backgroundColor: Colors.green,
       ),
-      body: ,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(note, style: TextStyle(fontSize: 18),),
+      ),
     );
   }
 }
