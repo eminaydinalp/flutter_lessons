@@ -1,7 +1,10 @@
 import 'package:first_project/projects/notes_app/pages/detail_page.dart';
+import 'package:first_project/projects/notes_app/pages/edit_note_page.dart';
 import 'package:first_project/projects/notes_app/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../constants/pref_keys.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.blue,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddNotes,
+        onPressed: /*_showAddNotes*/ _addNotes,
         child: Icon(Icons.add),
       ),
       body: _notes.isEmpty
@@ -62,11 +65,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                       leading: Icon(Icons.notes),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailPage(note: _notes[index])));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) =>
+                        //             DetailPage(note: _notes[index])));
+                        _updateNotes(index);
                       },
                       onLongPress: () => _confirmDelete(index)),
                 );
@@ -138,14 +142,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _saveNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList("notes", _notes);
+    await prefs.setStringList(PrefKeys.keyNotes, _notes);
   }
 
   Future<void> _loadNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      _notes = prefs.getStringList("notes") ?? [];
+      _notes = prefs.getStringList(PrefKeys.keyNotes) ?? [];
     });
   }
 
@@ -171,5 +175,44 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ));
+  }
+
+  Future<void> _addNotes() async {
+
+    final newNote = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EditNotePage()
+      )
+    );
+
+    if(newNote != null && newNote.isNotEmpty){
+      setState(() {
+        _notes.add(newNote);
+      });
+
+      await _saveNotes();
+    }
+
+  }
+
+  Future<void> _updateNotes(int index) async {
+
+    final updateNote = await Navigator.push<String>(
+        context,
+        MaterialPageRoute(
+            builder: (_) => EditNotePage(note: _notes[index],)
+        )
+    );
+
+    if(updateNote != null && updateNote.isNotEmpty){
+      setState(() {
+        _notes[index] = updateNote;
+      });
+
+      await _saveNotes();
+    }
+
+
   }
 }
