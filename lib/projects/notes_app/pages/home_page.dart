@@ -1,3 +1,4 @@
+import 'package:first_project/projects/notes_app/models/note.dart';
 import 'package:first_project/projects/notes_app/pages/detail_page.dart';
 import 'package:first_project/projects/notes_app/pages/edit_note_page.dart';
 import 'package:first_project/projects/notes_app/pages/settings_page.dart';
@@ -15,7 +16,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _inputController = TextEditingController();
-  List<String> _notes = [];
+  //List<String> _notes = [];
+  List<Note> _notes = [];
 
   @override
   void initState() {
@@ -60,7 +62,11 @@ class _HomePageState extends State<HomePage> {
                 return Card(
                   child: ListTile(
                       title: Text(
-                        _notes[index],
+                        _notes[index].title,
+                        maxLines: 1,
+                      ),
+                      subtitle: Text(
+                        _notes[index].content,
                         maxLines: 1,
                       ),
                       leading: Icon(Icons.notes),
@@ -106,50 +112,53 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _showAddNotes() {
-    _inputController.clear();
-
-    showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-              title: Text("Not Ekle"),
-              content: TextField(
-                controller: _inputController,
-                decoration: InputDecoration(
-                    hintText: "not yazınız", border: OutlineInputBorder()),
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(ctx), child: Text("iptal")),
-                ElevatedButton(
-                  onPressed: () async {
-                    String note = _inputController.text.trim();
-                    if (note.isEmpty) return;
-                    setState(() {
-                      _notes.add(note);
-                      //print("Not 2 : " + _notes[1]);
-                    });
-
-                    await _saveNotes();
-
-                    Navigator.pop(ctx);
-                  },
-                  child: Text("Ekle"),
-                )
-              ],
-            ));
-  }
+  // void _showAddNotes() {
+  //   _inputController.clear();
+  //
+  //   showDialog(
+  //       context: context,
+  //       builder: (ctx) => AlertDialog(
+  //             title: Text("Not Ekle"),
+  //             content: TextField(
+  //               controller: _inputController,
+  //               decoration: InputDecoration(
+  //                   hintText: "not yazınız", border: OutlineInputBorder()),
+  //             ),
+  //             actions: [
+  //               TextButton(
+  //                   onPressed: () => Navigator.pop(ctx), child: Text("iptal")),
+  //               ElevatedButton(
+  //                 onPressed: () async {
+  //                   String note = _inputController.text.trim();
+  //                   if (note.isEmpty) return;
+  //                   setState(() {
+  //                     _notes.add(note);
+  //                     //print("Not 2 : " + _notes[1]);
+  //                   });
+  //
+  //                   await _saveNotes();
+  //
+  //                   Navigator.pop(ctx);
+  //                 },
+  //                 child: Text("Ekle"),
+  //               )
+  //             ],
+  //           ));
+  // }
 
   Future<void> _saveNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(PrefKeys.keyNotes, _notes);
+    List<String> noteStrings = _notes.map((note) => note.toJsonString()).toList();
+    await prefs.setStringList(PrefKeys.keyNotes, noteStrings);
   }
 
   Future<void> _loadNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    List<String> noteStrings = prefs.getStringList(PrefKeys.keyNotes) ?? [];
+
     setState(() {
-      _notes = prefs.getStringList(PrefKeys.keyNotes) ?? [];
+      _notes = noteStrings.map((str) => Note.fromJsonString(str)).toList();
     });
   }
 
@@ -179,14 +188,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _addNotes() async {
 
-    final newNote = await Navigator.push<String>(
+    final newNote = await Navigator.push<Note>(
       context,
       MaterialPageRoute(
         builder: (_) => EditNotePage()
       )
     );
 
-    if(newNote != null && newNote.isNotEmpty){
+    if(newNote != null){
       setState(() {
         _notes.add(newNote);
       });
@@ -198,14 +207,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _updateNotes(int index) async {
 
-    final updateNote = await Navigator.push<String>(
+    final updateNote = await Navigator.push<Note>(
         context,
         MaterialPageRoute(
             builder: (_) => EditNotePage(note: _notes[index],)
         )
     );
 
-    if(updateNote != null && updateNote.isNotEmpty){
+    if(updateNote != null){
       setState(() {
         _notes[index] = updateNote;
       });
