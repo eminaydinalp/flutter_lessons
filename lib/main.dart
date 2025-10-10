@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'MainWidgets/show_image.dart';
+import 'api/user_list_page.dart';
 
 void main() {
   runApp(MultiProvider(
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
       themeMode: themeProvider.isDark ? ThemeMode.dark : ThemeMode.light,
-      home: HomePage(),
+      home: UserListPage(),
     );
   }
 }
