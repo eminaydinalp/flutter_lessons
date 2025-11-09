@@ -1,0 +1,14 @@
+[
+  {
+    "id" : 1,
+    "name": "Burger",
+    "price": 100,
+    "desc": "Dana eti"
+  },
+  {
+    "id" : 2,
+    "name": "Tost",
+    "price": 50,
+    "desc": "Kaşarlı"
+  }
+]
